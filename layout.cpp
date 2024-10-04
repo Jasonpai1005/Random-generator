@@ -1,7 +1,7 @@
 #include "layout.h"
 
 Layout::Layout(int _width, int _height, int _layers, int idx) : layout_idx(idx), width(_width), height(_height), layers(_layers), length(_width * _height * _layers), r_gen(idx){
-   assert(layers == 2);
+   // assert removed to support multiple layers
    grids = new int[length]();
    h_edges.resize(width);
    for(std::vector<bool> & h_e : h_edges){
@@ -28,14 +28,14 @@ Layout::~Layout(){
 
 void Layout::autoConfig(std::vector<std::pair<int, Net_config>> & net_configs){
    size_t wl_limit = std::max(width, height) * 1.5;
-   Net_config net_2_pins(5,  25, wl_limit, 2, 20, 0.85);
-   Net_config net_3_pins(7,  20, wl_limit, 3, 15, 0.85);
+   Net_config net_2_pins(5,  30, wl_limit, 2, 20, 0.85);
+   Net_config net_3_pins(7,  25, wl_limit, 3, 15, 0.85);
    Net_config net_4_pins(7,  20, wl_limit, 4, 10, 0.85);
-   Net_config net_5_pins(5,  20, wl_limit, 5, 10, 0.85);
-   std::normal_distribution<float> distribution_2(30.0, 2.0);
-   std::normal_distribution<float> distribution_3(10.0, 1.5);
-   std::normal_distribution<float> distribution_4(5.0, 1.0);
-   std::normal_distribution<float> distribution_5(5.0, 1.0);
+   Net_config net_5_pins(5,  15, wl_limit, 5, 10, 0.85);
+   std::normal_distribution<float> distribution_2(20.0, 5.0);
+   std::normal_distribution<float> distribution_3(10.0, 2.5);
+   std::normal_distribution<float> distribution_4(5.0, 0.0);
+   std::normal_distribution<float> distribution_5(4.0, 0.0);
    net_configs.push_back({(int) std::round(distribution_5(r_gen)), net_5_pins});
    net_configs.push_back({(int) std::round(distribution_4(r_gen)), net_4_pins});
    net_configs.push_back({(int) std::round(distribution_3(r_gen)), net_3_pins});
@@ -120,7 +120,6 @@ void Layout::archiveAndReset(){
 }
 
 bool Layout::generateNet(const Net_config & config){
-   assert(config.pin_num >= 2);//some function doesn't support more than 2 layers
    std::vector<int>candidates_idx;
    
    for(int i = 0; i < length; ++i){
@@ -373,6 +372,9 @@ void Layout::path2Wire(Net *n, std::vector<Point>& n_vias){
 void Layout::saveResult(const std::string & filename){
    std::ofstream fout;
 	fout.open(filename, std::ofstream::out);
+   // fout.open("./100x100x6/level_0/" + filename, std::ofstream::out);
+   // fout.open("./20x20/level_0/" + filename, std::ofstream::out);
+   // fout.open("./60x60x6/level_0/" + filename, std::ofstream::out);
 
 	if (!fout.is_open())
 	{	
@@ -401,18 +403,18 @@ void Layout::saveResult(const std::string & filename){
       for(Point & p : n->pins){
 		   fout << p.x << " " << p.y << " " << p.z << std::endl;
 	   }
-      fout << "Via_num " << n->vias.size() << std::endl;
-      for(Point & p : n->vias){
-         fout << p.x << " " << p.y << std::endl;
-      }
-      fout << "H_segment_num " << n->h_segments.size() << std::endl;
-      for(std::vector<int> & seg : n->h_segments){
-         fout << seg[0] << " " << seg[1] << " " << seg[2] << " " << seg[3] << " " << seg[4] << " " << seg[5] << std::endl;
-      }
-      fout << "V_segment_num " << n->v_segments.size() << std::endl;
-      for(std::vector<int> & seg : n->v_segments){
-         fout << seg[0] << " " << seg[1] << " " << seg[2] << " " << seg[3] << " " << seg[4] << " " << seg[5] << std::endl;
-      }
+      // fout << "Via_num " << n->vias.size() << std::endl;
+      // for(Point & p : n->vias){
+      //    fout << p.x << " " << p.y << " " << p.z << std::endl;
+      // }
+      // fout << "H_segment_num " << n->h_segments.size() << std::endl;
+      // for(std::vector<int> & seg : n->h_segments){
+      //    fout << seg[0] << " " << seg[1] << " " << seg[2] << " " << seg[3] << " " << seg[4] << " " << seg[5] << std::endl;
+      // }
+      // fout << "V_segment_num " << n->v_segments.size() << std::endl;
+      // for(std::vector<int> & seg : n->v_segments){
+      //    fout << seg[0] << " " << seg[1] << " " << seg[2] << " " << seg[3] << " " << seg[4] << " " << seg[5] << std::endl;
+      // }
    }
 
 	fout.close();

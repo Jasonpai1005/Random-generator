@@ -83,6 +83,7 @@ private:
    int * grids; //-1: obstacle, 0: empty, 1: net 2: pin
    std::vector<std::vector<bool>> h_edges;
    std::vector<std::vector<bool>> v_edges;
+   // std::vector<std::vector<std::vector<bool>>> edges;
    bool * visited;
 };
 
