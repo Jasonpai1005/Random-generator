@@ -60,9 +60,11 @@ for count, file in enumerate(file_list):
             pin_num = int(line[1])
             for _ in range(pin_num):
                 line = f.readline().split()
-                #if net_id == 166:
                 pin_list.append([int(line[0]), int(line[1]), int(line[2])])
                 pin_id_list.append(net_id)
+                #if net_id == 166:
+                # pin_list.append([int(line[0]), int(line[1]), int(line[2])])
+                # pin_id_list.append(net_id)
 
             #read vias
             line = f.readline().split()
@@ -70,7 +72,7 @@ for count, file in enumerate(file_list):
             for _ in range(via_num):
                 line = f.readline().split()
                 #if net_id == 166:
-                via_list.append([int(line[0]), int(line[1])])
+                via_list.append([int(line[0]), int(line[1]), int(line[2])])
 
             #read horizontal wires
             line = f.readline().split()
@@ -115,8 +117,11 @@ for count, file in enumerate(file_list):
         for via in via_list:
             rect = Rectangle((0.25 + via[0], 0.25 + via[1]), 0.5, 0.5, color="red", fill=False,alpha = 1)
             ax.add_patch(rect)
+        
         plt.xlim([0,width])
         plt.ylim([0,height])
+        # plt.xlim(width)
+        # plt.ylim(height)
         plt.title(f"{file_name} WL = {wl}")
         plt.savefig(f"./{args.dir}/{file_name}.png", dpi=300)
         plt.close(fig)
